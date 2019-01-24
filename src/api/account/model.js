@@ -4,11 +4,13 @@ const accountSchema = new Schema({
   balance: {
     type: Number,
     required: true,
+    default: 0,
   },
-  users: [{
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
+    // required: true,
     ref: 'User',
-  }],
+  }
 }, {
   timestamps: true
 });
@@ -16,7 +18,7 @@ const accountSchema = new Schema({
 accountSchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['id', 'balance', 'users'];
+    let fields = ['id', 'balance'];
 
     if (full) {
       fields = [...fields, 'createdAt']

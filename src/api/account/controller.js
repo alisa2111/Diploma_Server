@@ -1,7 +1,7 @@
 import {Account} from "./index";
-import { success, notFound } from '../../services/response/';
+import {  success, notFound } from '../../services/response/';
 
-export const create = ({ bodymen: { body } }, res, next) => {
+export const createAccount = ({ bodymen: { body } }, res, next) => {
   console.log(body);
   return Account.create(body)
     .then((account) => account.view(true))

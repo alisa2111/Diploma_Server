@@ -1,7 +1,7 @@
 import {middleware as body} from "bodymen";
 import { schema } from './model'
-import {create} from "./controller";
 import { Router } from 'express'
+import {createAccount} from "./controller";
 export Account, { schema } from './model'
 
 
@@ -13,6 +13,6 @@ const { balance, users } = schema.tree;
  */
 router.post('/',
   body({ balance, users }),
-  create);
+  createAccount);
 
 export default router;

@@ -6,8 +6,8 @@ import { index, showMe, show, create, update, updatePassword, destroy } from './
 import { schema } from './model'
 export User, { schema } from './model'
 
-const router = new Router()
-const { email, password, name, picture, role } = schema.tree
+const router = new Router();
+const { email, password, name, picture, role } = schema.tree;
 
 /**
  * @api {get} /users Retrieve users
@@ -23,7 +23,7 @@ const { email, password, name, picture, role } = schema.tree
 router.get('/',
   token({ required: true, roles: ['admin'] }),
   query(),
-  index)
+  index);
 
 /**
  * @api {get} /users/me Retrieve current user
@@ -35,7 +35,7 @@ router.get('/',
  */
 router.get('/me',
   token({ required: true }),
-  showMe)
+  showMe);
 
 /**
  * @api {get} /users/:id Retrieve user
@@ -46,7 +46,7 @@ router.get('/me',
  * @apiError 404 User not found.
  */
 router.get('/:id',
-  show)
+  show);
 
 /**
  * @api {post} /users Create user
@@ -66,8 +66,8 @@ router.get('/:id',
  */
 router.post('/',
   // master(),
-  body({ email, password }),
-  create)
+  // body({ email, password, name }),
+  create);
 
 /**
  * @api {put} /users/:id Update user
@@ -85,7 +85,7 @@ router.post('/',
 router.put('/:id',
   token({ required: true }),
   body({ name, picture }),
-  update)
+  update);
 
 /**
  * @api {put} /users/:id/password Update password
@@ -101,7 +101,7 @@ router.put('/:id',
 router.put('/:id/password',
   passwordAuth(),
   body({ password }),
-  updatePassword)
+  updatePassword);
 
 /**
  * @api {delete} /users/:id Delete user
@@ -115,6 +115,6 @@ router.put('/:id/password',
  */
 router.delete('/:id',
   token({ required: true, roles: ['admin'] }),
-  destroy)
+  destroy);
 
 export default router

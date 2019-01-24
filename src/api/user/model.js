@@ -4,7 +4,7 @@ import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
 
-const roles = ['user', 'admin']
+const roles = ['user', 'admin'];
 
 const userSchema = new Schema({
   email: {
@@ -25,6 +25,11 @@ const userSchema = new Schema({
     index: true,
     trim: true
   },
+  accounts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Account',
+  }],
   role: {
     type: String,
     enum: roles,
@@ -36,11 +41,11 @@ const userSchema = new Schema({
   }
 }, {
   timestamps: true
-})
+});
 
 userSchema.path('email').set(function (email) {
   if (!this.picture || this.picture.indexOf('https://gravatar.com') === 0) {
-    const hash = crypto.createHash('md5').update(email).digest('hex')
+    const hash = crypto.createHash('md5').update(email).digest('hex');
     this.picture = `https://gravatar.com/avatar/${hash}?d=identicon`
   }
 
@@ -49,30 +54,30 @@ userSchema.path('email').set(function (email) {
   }
 
   return email
-})
+});
 
 userSchema.pre('save', function (next) {
-  if (!this.isModified('password')) return next()
+  if (!this.isModified('password')) return next();
 
   /* istanbul ignore next */
-  const rounds = env === 'test' ? 1 : 9
+  const rounds = env === 'test' ? 1 : 9;
 
   bcrypt.hash(this.password, rounds).then((hash) => {
-    this.password = hash
+    this.password = hash;
     next()
   }).catch(next)
-})
+});
 
 userSchema.methods = {
   view (full) {
-    let view = {}
-    let fields = ['id', 'name', 'picture']
+    let view = {};
+    let fields = ['id', 'name', 'picture', 'accounts'];
 
     if (full) {
       fields = [...fields, 'email', 'createdAt']
     }
 
-    fields.forEach((field) => { view[field] = this[field] })
+    fields.forEach((field) => { view[field] = this[field] });
 
     return view
   },
@@ -80,15 +85,15 @@ userSchema.methods = {
   authenticate (password) {
     return bcrypt.compare(password, this.password).then((valid) => valid ? this : false)
   }
-}
+};
 
 userSchema.statics = {
   roles
-}
+};
 
-userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
+userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] });
 
-const model = mongoose.model('User', userSchema)
+const model = mongoose.model('User', userSchema);
 
-export const schema = model.schema
+export const schema = model.schema;
 export default model
