@@ -18,7 +18,7 @@ const accountSchema = new Schema({
 accountSchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['id', 'balance'];
+    let fields = ['id', 'balance', 'owner'];
 
     if (full) {
       fields = [...fields, 'createdAt']

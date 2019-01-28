@@ -6,13 +6,13 @@ export Account, { schema } from './model'
 
 
 const router = new Router();
-const { balance, users } = schema.tree;
+const { balance, owner } = schema.tree;
 
 /**
  * @api {post} /accounts Create account
  */
 router.post('/',
-  body({ balance, users }),
+  body({ balance, owner }),
   createAccount);
 
 export default router;

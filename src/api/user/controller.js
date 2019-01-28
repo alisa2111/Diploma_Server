@@ -20,27 +20,21 @@ export const showMe = ({ user }, res) =>
 
 export const create = ({body}, res, next) => {
   const {user} = body;
-
-  Account.create({})
-    .then(account => user.accounts = [account._id.toString()])
-    .then(() => {
-      return User.create(user)
-        .then((user) => user.view(true))
-        .then(success(res, 201))
-        .catch((err) => {
-          /* istanbul ignore else */
-          if (err.name === 'MongoError' && err.code === 11000) {
-            res.status(409).json({
-              valid: false,
-              param: 'email',
-              message: 'email already registered'
-            })
-          } else {
-            next(err)
-          }
-        });
-    })
-    .catch((err) => console.log(err));
+  return User.create(user)
+    .then((user) => user.view(true))
+    .then(success(res, 201))
+    .catch((err) => {
+      /* istanbul ignore else */
+      if (err.name === 'MongoError' && err.code === 11000) {
+        res.status(409).json({
+          valid: false,
+          param: 'email',
+          message: 'email already registered'
+        })
+      } else {
+        next(err)
+      }
+    });
 };
 
 export const update = ({ bodymen: { body }, params, user }, res, next) =>
