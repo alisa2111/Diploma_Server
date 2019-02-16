@@ -2,8 +2,9 @@ import { Router } from 'express'
 import user from './user'
 import auth from './auth'
 import account from './account'
+import expense from './expense'
 
-const router = new Router()
+const router = new Router();
 
 /**
  * @apiDefine master Master access only
@@ -31,5 +32,7 @@ const router = new Router()
 router.use('/users', user);
 router.use('/auth', auth);
 router.use('/accounts', account);
+router.use('/expenses', expense);
+
 
 export default router
