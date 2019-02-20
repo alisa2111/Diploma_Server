@@ -33,6 +33,6 @@ router.use('/users', user);
 router.use('/auth', auth);
 router.use('/accounts', account);
 router.use('/expenses', expense);
-
+router.use('/expenses', expense);
 
 export default router

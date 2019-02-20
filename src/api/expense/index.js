@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {schema} from "../account/model";
 import {middleware as body} from "bodymen";
-import {createExpense} from "./controller";
+import {createExpense, getExpenses} from "./controller";
 export Expense, { schema } from './model'
 
 const router = new Router();
@@ -15,5 +15,11 @@ const {key, value, comment} = schema.tree;
 router.post('/update',
   body({ key, value, comment }),
   createExpense);
+
+/**
+ * @api {get} /expenses/fetch Get Expenses
+ */
+router.get('/:id',
+  getExpenses);
 
 export default router;

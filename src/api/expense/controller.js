@@ -6,13 +6,18 @@ import _ from 'lodash';
 export const createExpense = ({body}, res, next) => {
   Expense.create(body.expense)
     .then(expense => expense.view(true))
-    .then(expense => Expense.find({accountId: expense.accountId})
-        .then(accountExpenses => getSummaryExpenses(accountExpenses))
-        .then(success(res, 201)) // res = total expenses
-        .catch(next)
+    .then(expense => getExpenses({params: {id: expense.accountId}}, res, next)
     )
     // [TODO] change status code
     .catch(() => res.status(409).end())
+};
+
+// params: {id: accountId}
+export const getExpenses = ({params}, res, next) => {
+  Expense.find({ accountId: params.id })
+    .then(accountExpenses => getSummaryExpenses(accountExpenses))
+    .then(success(res, 201)) // res = total expenses
+    .catch(next)
 };
 
 // [TODO] REFACTOR OR CHANGE LOGIC
