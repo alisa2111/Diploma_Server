@@ -2,9 +2,9 @@ import { Router } from 'express'
 import user from './user'
 import auth from './auth'
 import account from './account'
-import expense from './expense'
+import moneyFlow from './moneyFlow'
 
-const router = new Router();
+const router = new Router()
 
 /**
  * @apiDefine master Master access only
@@ -29,10 +29,9 @@ const router = new Router();
  * @apiParam {String[]} [sort=-createdAt] Order of returned items.
  * @apiParam {String[]} [fields] Fields to be returned.
  */
-router.use('/users', user);
-router.use('/auth', auth);
-router.use('/accounts', account);
-router.use('/expenses', expense);
-router.use('/expenses', expense);
+router.use('/users', user)
+router.use('/auth', auth)
+router.use('/accounts', account)
+router.use('/money-flow', moneyFlow)
 
 export default router
