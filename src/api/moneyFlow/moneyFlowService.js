@@ -26,6 +26,8 @@ export const getAllExpenses = ({params}, res, next) => {
   MoneyFlow.aggregate(
     [
       {
+        $match: {type: "expense"}},
+      {
         $group: {
           _id: {type: "expense", categoryId: "$categoryId", accountId: params.accountId},
           totalAmount: {$sum: '$amount'}
