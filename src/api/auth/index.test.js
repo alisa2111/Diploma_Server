@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { masterKey, apiRoot } from '../../config'
-import { User } from '../user'
+import { User } from '../user/userController'
 import { verify } from '../../services/jwt'
 import express from '../../services/express'
 import routes from '.'

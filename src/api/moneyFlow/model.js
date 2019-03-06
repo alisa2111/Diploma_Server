@@ -7,23 +7,25 @@ const moneyFlowSchema = new Schema({
     ref: 'Account'
   },
   type: {
-    type: String,
-    required: true,
-  },
-  key: {
-    type: String,
+    type: String, // 'income' || 'expense'
     required: true
   },
-  title: {
-    type: String,
-    required: true
-  },
-  value: {
+  amount: {
     type: Number,
     required: true
   },
   comment: {
     type: String
+  },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Category'
+  },
+  sourceId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Source'
   },
 }, {
   timestamps: true
@@ -31,20 +33,20 @@ const moneyFlowSchema = new Schema({
 
 moneyFlowSchema.methods = {
   view (full) {
-    let view = {}
-    let fields = ['type', 'key', 'value', 'comment', 'accountId']
+    let view = {};
+    let fields = ['accountId', 'type', 'amount', 'comment', 'categoryId', 'sourceId'];
 
     if (full) {
       fields = [...fields, 'createdAt']
     }
 
-    fields.forEach((field) => { view[field] = this[field] })
+    fields.forEach((field) => { view[field] = this[field] });
 
     return view
   }
 
-}
+};
 
-const model = mongoose.model('MoneyFlow', moneyFlowSchema)
-export const schema = model.schema
+const model = mongoose.model('MoneyFlow', moneyFlowSchema);
+export const schema = model.schema;
 export default model

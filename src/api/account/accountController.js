@@ -1,7 +1,7 @@
 import {middleware as body} from "bodymen";
 import { schema } from './model'
 import { Router } from 'express'
-import {createAccount, getAccount} from "./controller";
+import {createAccount, getAccount} from "./accountService";
 export Account, { schema } from './model'
 
 
@@ -9,16 +9,18 @@ const router = new Router();
 const { balance, owner } = schema.tree;
 
 /**
- * @api {post} /accounts Create account
+ * Create account
+ * @api {post} /accounts
  */
 router.post('/',
   body({ balance, owner }),
   createAccount);
 
 /**
- * @api {get} /accounts/:id Get Account
+ * Get Account
+ * @api {get} /accounts/:accountId
  */
-router.get('/:id',
+router.get('/:accountId',
   getAccount);
 
 export default router;

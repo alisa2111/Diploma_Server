@@ -1,8 +1,10 @@
 import { Router } from 'express'
-import user from './user'
-import auth from './auth'
-import account from './account'
-import moneyFlow from './moneyFlow'
+import user from './user/userController'
+import auth from './auth/authController'
+import account from './account/accountController'
+import moneyFlow from './moneyFlow/moneyFlowController'
+import category from './category/categoryController'
+import source from './source/sourceController'
 
 const router = new Router()
 
@@ -29,9 +31,11 @@ const router = new Router()
  * @apiParam {String[]} [sort=-createdAt] Order of returned items.
  * @apiParam {String[]} [fields] Fields to be returned.
  */
-router.use('/users', user)
-router.use('/auth', auth)
-router.use('/accounts', account)
-router.use('/money-flow', moneyFlow)
+router.use('/users', user);
+router.use('/auth', auth);
+router.use('/accounts', account);
+router.use('/money-flow', moneyFlow);
+router.use('/categories', category);
+router.use('/sources', source);
 
 export default router

@@ -140,12 +140,12 @@ You can customize the `src` and `api` directories.
 src/
 ├─ api/
 │  ├─ user/
-│  │  ├─ controller.js
-│  │  ├─ index.js
+│  │  ├─ moneyFlowService.js
+│  │  ├─ moneyFlowController.js
 │  │  ├─ index.test.js
 │  │  ├─ model.js
 │  │  └─ model.test.js
-│  └─ index.js
+│  └─ moneyFlowController.js
 ├─ services/
 │  ├─ express/
 │  ├─ facebook/
@@ -155,7 +155,7 @@ src/
 │  └─ your-service/
 ├─ app.js
 ├─ config.js
-└─ index.js
+└─ moneyFlowController.js
 ```
 
 ### src/api/
@@ -166,13 +166,13 @@ Here is where the API endpoints are defined. Each API has its own folder.
 
 It defines the Mongoose schema and model for the API endpoint. Any changes to the data model should be done here.
 
-#### src/api/some-endpoint/controller.js
+#### src/api/some-endpoint/moneyFlowService.js
 
 This is the API controller file. It defines the main router middlewares which use the API model.
 
-#### src/api/some-endpoint/index.js
+#### src/api/some-endpoint/moneyFlowController.js
 
-This is the entry file of the API. It defines the routes using, along other middlewares (like session, validation etc.), the middlewares defined in the `some-endpoint.controller.js` file.
+This is the entry file of the API. It defines the routes using, along other middlewares (like session, validation etc.), the middlewares defined in the `some-endpoint.moneyFlowService.js` file.
 
 ### services/
 
