@@ -6,7 +6,7 @@ export Source, { schema } from './model'
 const router = new Router();
 
 /**
- * Get all categories
+ * Get all sources
  * @api {get} /sources/accountId
  */
 router.get('/:accountId',
@@ -20,7 +20,7 @@ router.post('/',
   createSource);
 
 /**
- * Create source
+ * Update source
  * @api {post} /sources
  */
 router.post('/',
