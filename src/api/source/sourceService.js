@@ -14,6 +14,7 @@ export const createSource = ({body}, res, next) => {
 export const getSources = ({params}, res, next) => {
   Source.find({accountId: params.accountId})
     .then(notFound(res))
+    .then(res => res.map(r => r.view()))
     .then(success(res))
     .catch(next);
 };

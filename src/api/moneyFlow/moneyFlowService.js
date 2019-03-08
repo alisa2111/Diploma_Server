@@ -14,14 +14,14 @@ export const addExpense = ({body}, res, next) => {
       updateSource(expense);
       return expense;
     })
-    .then(expense => getAllExpenses({params: {accountId: expense.accountId}}, res, next))
+    .then(expense => getSummaryExpenses({params: {accountId: expense.accountId}}, res, next))
     .catch(() => res.status(400).end())
 };
 
 /**
  * params: {accountId: accountId}
  */
-export const getAllExpenses = ({params}, res, next) => {
+export const getSummaryExpenses = ({params}, res, next) => {
   // TODO DATE
   MoneyFlow.aggregate(
     [
@@ -48,9 +48,10 @@ export const getAllExpenses = ({params}, res, next) => {
   )
     .then(notFound(res))
     .then(groupedData => groupedData.map(data => ({
-        value: data.totalAmount,
+        categoryId: data.category[0]._id,
+        totalAmount: data.totalAmount,
+        title: data.category[0].title,
         color: data.category[0].color,
-        key: data.category[0].title,
         iconKey: data.category[0].iconKey
       })
     ))

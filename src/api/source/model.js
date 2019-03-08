@@ -30,7 +30,7 @@ const sourceSchema = new Schema({
 sourceSchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['title', 'accountId', 'type', 'comment', 'balance'];
+    let fields = ['id', 'title', 'accountId', 'type', 'comment', 'balance'];
 
     if (full) {
       fields = [...fields, 'createdAt']

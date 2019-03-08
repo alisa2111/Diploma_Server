@@ -1,7 +1,7 @@
 import {Router} from 'express'
 import {schema} from '../account/model'
 import {middleware as body} from 'bodymen'
-import {addExpense, getAllExpenses, addIncome} from './moneyFlowService'
+import {addExpense, getSummaryExpenses, addIncome} from './moneyFlowService'
 export MoneyFlow, { schema } from './model'
 
 const router = new Router();
@@ -16,11 +16,20 @@ router.post('/expenses/add',
   addExpense);
 
 /**
- * Get all expenses
- * @api {get} money-flow/expenses/accountId
+ * Get summary expenses
+ * @api {get} money-flow/expenses/summary/:accountId
+ * @return array of summary expenses
+ * @return_example [{
+ *      categoryId: string
+ *      totalAmount: number
+ *      title: string
+ *      color: string
+ *      iconKey: string
+ *  }]
+ *
  */
-router.get('/expenses/:accountId',
-  getAllExpenses);
+router.get('/expenses/summary/:accountId',
+  getSummaryExpenses);
 
 /**
  * Add Income
