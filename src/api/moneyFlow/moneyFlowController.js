@@ -12,7 +12,7 @@ const {key, value, comment} = schema.tree;
  * @api {post} money-flow/expenses/add
  * when user add expense -> recalculating total expenses for pie chart
  */
-router.post('/expenses/add',
+router.post('/expenses',
   addExpense);
 
 /**
@@ -36,7 +36,7 @@ router.get('/expenses/summary/:accountId',
  * @api {post} money-flow/income/add
  * @return updated sources for account
  */
-router.post('/income/add',
+router.post('/income',
   body({ key, value, comment }),
   addIncome);
 
