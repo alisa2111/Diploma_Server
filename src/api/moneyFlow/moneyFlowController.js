@@ -1,11 +1,19 @@
 import {Router} from 'express'
 import {schema} from '../account/model'
 import {middleware as body} from 'bodymen'
-import {addExpense, getSummaryExpenses, addIncome} from './moneyFlowService'
+import {addExpense, getSummaryExpenses, addIncome, getAll} from './moneyFlowService'
 export MoneyFlow, { schema } from './model'
 
 const router = new Router();
 const {key, value, comment} = schema.tree;
+
+/**
+ * Get all money-flow for history
+ * @api {get} money-flow/:accountId
+ * @return all account's money-flow
+ */
+router.get('/:accountId', getAll);
+
 
 /**
  * Add Expense

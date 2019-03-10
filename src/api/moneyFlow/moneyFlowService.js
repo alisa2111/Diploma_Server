@@ -71,3 +71,14 @@ export const addIncome = ({body}, res, next) => {
     .catch(() => res.status(400).end())
 };
 
+/**
+ * params  {accountId: accountId}
+ */
+
+export const getAll = ({params}, res, next) => {
+  MoneyFlow.find({accountId: params.accountId})
+    .then(notFound(res))
+    .then(success(res))
+    .catch(() => res.status(400).end())
+};
+
