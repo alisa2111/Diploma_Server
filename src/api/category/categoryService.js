@@ -8,6 +8,7 @@ import {Category} from './categoryController'
 export const getAllCategories = ({params}, res, next) => {
   Category.find({accountId: params.accountId})
     .then(notFound(res))
+    .then(res => res.map(r => r.view()))
     .then(success(res))
     .catch(next)
 };
