@@ -19,7 +19,6 @@ const moneyFlowSchema = new Schema({
   },
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'Category'
   },
   sourceId: {
@@ -29,7 +28,7 @@ const moneyFlowSchema = new Schema({
   },
 }, {
   timestamps: true
-})
+});
 
 moneyFlowSchema.methods = {
   view (full) {
