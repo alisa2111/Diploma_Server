@@ -2,6 +2,7 @@ import {MoneyFlow} from './moneyFlowController'
 import {success, notFound} from '../../services/response';
 import {Source} from '../source/sourceController' // TODO remove
 import {getSources, updateSource} from "../source/sourceService";
+import mongoose, { Schema } from 'mongoose'
 
 /**
  * body: {expense: {accountId, amount, categoryId, comment, sourceId}}
@@ -26,7 +27,8 @@ export const getSummaryExpenses = ({params}, res, next) => {
   MoneyFlow.aggregate(
     [
       {
-        $match: {type: "expense"}},
+        $match: {type: "expense"}
+      },
       {
         $group: {
           _id: {type: "expense", categoryId: "$categoryId", accountId: params.accountId},
@@ -76,7 +78,32 @@ export const addIncome = ({body}, res, next) => {
  */
 
 export const getAll = ({params}, res, next) => {
-  MoneyFlow.find({accountId: params.accountId})
+  MoneyFlow.aggregate(
+    [
+      {
+        $match: {accountId: mongoose.Types.ObjectId(params.accountId)}
+      },
+      {
+        $lookup:
+          {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category"
+          }
+      },
+
+      {
+        $lookup:
+          {
+            from: "sources",
+            localField: "sourceId",
+            foreignField: "_id",
+            as: "source"
+          }
+      }
+    ]
+  )
     .then(notFound(res))
     .then(success(res))
     .catch(() => res.status(400).end())
