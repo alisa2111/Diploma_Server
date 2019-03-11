@@ -25,7 +25,7 @@ const categorySchema = new Schema({
 categorySchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['title', 'accountId', 'color', 'iconKey'];
+    let fields = ['id', 'title', 'accountId', 'color', 'iconKey'];
 
     if (full) {
       fields = [...fields, 'createdAt']
