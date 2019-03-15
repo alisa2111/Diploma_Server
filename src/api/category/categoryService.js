@@ -36,15 +36,23 @@ export const updateCategory = (ctgr) => {
 
 export const deleteCategory = (categoryId) => {
   return new Promise((resolve, reject) => {
-    Category.findOneAndRemove({_id: categoryId})
-      .then(res => {
-        if (res) {
-          resolve(res);
+    isCategoryConnectedToMoneyFlows(categoryId)
+      .then(result => {
+        if (result.connected) {
+          reject(403);
         } else {
-          reject(404);
+          Category.findOneAndRemove({_id: categoryId})
+            .then(res => {
+              if (res) {
+                resolve(res);
+              } else {
+                reject(404);
+              }
+            })
+            .catch(reject)
         }
       })
-      .catch(reject)
+      .catch(reject);
   });
 };
 
@@ -52,7 +60,7 @@ export const deleteCategory = (categoryId) => {
 export const isCategoryConnectedToMoneyFlows = (categoryId) => {
   return new Promise((resolve, reject) => {
     MoneyFlow.findOne({categoryId: categoryId})
-      .then(mf => resolve({result: !!mf}))
+      .then(mf => resolve({connected: !!mf}))
       .catch(reject)
   });
 };

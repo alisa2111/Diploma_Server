@@ -20,11 +20,7 @@ const router = new Router();
  * @params: {accountId: accountId}
  * @return account's categories
  */
-router.get('/:accountId', ({params}, res) => {
-  getAllCategories(params.accountId)
-    .then(success(res))
-    .catch(failRequest(res));
-});
+router.get('/:accountId', ({params}, res) => returnAllCategories(params.accountId, res));
 
 /**
  * Create category
@@ -35,10 +31,7 @@ router.get('/:accountId', ({params}, res) => {
  */
 router.post('/', ({body}, res) => {
   createCategory(body.category)
-    .then(category =>
-      getAllCategories(category.accountId)
-        .then(success(res, 201))
-        .catch(failRequest(res)))
+    .then(category => returnAllCategories(category.accountId, res, 201))
     .catch(failRequest(res));
 });
 
@@ -52,10 +45,7 @@ router.post('/', ({body}, res) => {
  */
 router.put('/:categoryId', ({params, body}, res) => {
   updateCategory(body.category)
-    .then(updatedCategory =>
-      getAllCategories(updatedCategory.accountId)
-        .then(success(res, 202))
-        .catch(failRequest(res)))
+    .then(updatedCategory => returnAllCategories(updatedCategory.accountId, res, 202))
     .catch(failRequest(res));
 });
 
@@ -70,25 +60,25 @@ router.put('/:categoryId', ({params, body}, res) => {
  * @body: {replaceTo ?: replaceToId}
  * @returns all categories for deleted category's accountId
  */
-//todo: refactor it !!!
 router.post('/delete/:categoryId', ({params, body}, res) => {
   if (body.replaceTo) {
     replaceCategory(params.categoryId, body.replaceTo)
-      .then(() => deleteCategory(params.categoryId)
-        .then(category =>
-          getAllCategories(category.accountId)
-            .then(success(res, 202))
-            .catch(failRequest(res)))
-        .catch(failRequest(res)))
-  } else {
-    deleteCategory(params.categoryId)
-      .then(category =>
-        getAllCategories(category.accountId)
-          .then(success(res, 202))
-          .catch(failRequest(res)))
+      .then(() => processDeleteCategory(params.categoryId, res, 202))
       .catch(failRequest(res))
+  } else {
+    processDeleteCategory(params.categoryId, res, 202)
   }
 });
+
+const processDeleteCategory = (categoryId, res, successStatus) =>
+  deleteCategory(categoryId)
+    .then(category => returnAllCategories(category.accountId, res, successStatus))
+    .catch(failRequest(res));
+
+const returnAllCategories = (accountId, res, successStatus) =>
+  getAllCategories(accountId)
+    .then(success(res, successStatus))
+    .catch(failRequest(res));
 
 /**
  *
