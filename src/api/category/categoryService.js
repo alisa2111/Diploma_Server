@@ -1,51 +1,74 @@
-import {success, notFound} from '../../services/response';
 import {Category} from './categoryController'
+import {MoneyFlow} from '../moneyFlow/moneyFlowController';
 
-/**
- * params: {accountId: accountId}
- * @return account's categories
- */
-export const getAllCategories = ({params}, res, next, successCode = 200) => {
-  Category.find({accountId: params.accountId})
-    .then(notFound(res))
-    .then(res => res.map(r => r.view()))
-    .then(success(res, successCode))
-    .catch(next)
+export const createCategory = (category) => {
+  return new Promise((resolve, reject) => {
+    Category.create(category)
+      .then(category => resolve(category.view()))
+      .catch(() => reject(500));
+  });
 };
 
-/**
- * body: {category: {accountId, color, title, iconKey}}
- * @return created category
- */
-export const createCategory = ({body}, res, next) => {
-  Category.create(body.category)
-    .then(category => category.view(true))
-    .then(category => getAllCategories({params: {accountId: category.accountId}}, res, next, 201))
-    .catch(next);
+export const getAllCategories = (accountId) => {
+  return new Promise((resolve, reject) => {
+    Category.find({accountId: accountId})
+      .then(categories => resolve(categories.map(c => c.view())))
+      .catch(reject);
+  });
 };
 
-/**
- * params: {categoryId: categoryId}
- * body: {category: fields for updating}
- * @return updated category
- */
-export const updateCategory = ({params, body}, res, next) => {
-  Category.findById(params.categoryId)
-    .then(notFound(res))
-    .then(category => Object.assign(category, body.category).save())
-    .then(category => category.view(true))
-    .then(category => getAllCategories({params: {accountId: category.accountId}}, res, next, 202))
-    .catch(next)
+export const updateCategory = (ctgr) => {
+  return new Promise((resolve, reject) => {
+    Category.findById(ctgr.id)
+      .then(category => {
+        if (category) {
+          return category;
+        } else {
+          reject(404);
+        }
+      })
+      .then(category => Object.assign(category, ctgr).save())
+      .then(category => category.view())
+      .then(category => resolve(category))
+      .catch(reject)
+  });
 };
 
-/**
- * params: {categoryId: categoryId}
- */
-export const deleteCategory = ({params}, res, next) => {
-  Category.findById(params.categoryId)
-    .then(notFound(res))
-    .then(category => category.remove())
-    .then(category => getAllCategories({params: {accountId: category.accountId}}, res, next, 202))
-    .catch(next)
+export const deleteCategory = (categoryId) => {
+  return new Promise((resolve, reject) => {
+    Category.findOneAndRemove({_id: categoryId})
+      .then(res => {
+        if (res) {
+          resolve(res);
+        } else {
+          reject(404);
+        }
+      })
+      .catch(reject)
+  });
 };
 
+//todo: move it to moneyFlowService.js
+export const isCategoryConnectedToMoneyFlows = (categoryId) => {
+  return new Promise((resolve, reject) => {
+    MoneyFlow.findOne({categoryId: categoryId})
+      .then(mf => resolve({result: !!mf}))
+      .catch(reject)
+  });
+};
+
+//todo: move it to moneyFlowService.js
+export const replaceCategory = (categoryId, replaceTo) => {
+  return new Promise((resolve, reject) => {
+    MoneyFlow.updateMany(
+      {categoryId: categoryId},
+      {$set: {categoryId: replaceTo}}
+    ).then(res => {
+      if (res.ok) {
+        resolve();
+      } else {
+        reject();
+      }
+    })
+  });
+};

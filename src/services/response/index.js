@@ -24,3 +24,8 @@ export const authorOrAdmin = (res, user, userField) => (entity) => {
   }
   return null
 }
+
+export const failRequest = (res) => (statusCode) => {
+  res.status(statusCode || 500).end();
+  return null;
+};
