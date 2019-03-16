@@ -3,6 +3,7 @@ import {success, notFound} from '../../services/response';
 import {Source} from '../source/sourceController' // TODO remove
 import {getSources, updateSource} from "../source/sourceService";
 import mongoose, { Schema } from 'mongoose'
+import {getCtgrSummaryExpenses} from "../category/categoryService";
 
 /**
  * body: {expense: {accountId, amount, categoryId, comment, sourceId}}
@@ -23,40 +24,7 @@ export const addExpense = ({body}, res, next) => {
  * params: {accountId: accountId}
  */
 export const getSummaryExpenses = ({params}, res, next) => {
-  // TODO DATE
-  MoneyFlow.aggregate(
-    [
-      {
-        $match: {type: "expense"}
-      },
-      {
-        $group: {
-          _id: {type: "expense", categoryId: "$categoryId", accountId: params.accountId},
-          totalAmount: {$sum: '$amount'}
-        }
-      },
-
-      {
-        $lookup:
-          {
-            from: "categories",
-            localField: "_id.categoryId",
-            foreignField: "_id",
-            as: "category"
-          }
-      }
-
-    ]
-  )
-    .then(notFound(res))
-    .then(groupedData => groupedData.map(data => ({
-        categoryId: data.category[0]._id,
-        totalAmount: data.totalAmount,
-        title: data.category[0].title,
-        color: data.category[0].color,
-        iconKey: data.category[0].iconKey
-      })
-    ))
+  getCtgrSummaryExpenses(params.accountId)
     .then(success(res))
     .catch(next)
 };

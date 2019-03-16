@@ -1,5 +1,6 @@
 import {Category} from './categoryController'
 import {MoneyFlow} from '../moneyFlow/moneyFlowController';
+import mongoose from "mongoose";
 
 export const createCategory = (category) => {
   return new Promise((resolve, reject) => {
@@ -78,5 +79,51 @@ export const replaceCategory = (categoryId, replaceTo) => {
         reject();
       }
     })
+  });
+};
+
+export const getCtgrSummaryExpenses = (accountId) => {
+  //TODO: Date
+  return new Promise((resolve, reject) => {
+    Category.aggregate([
+      {$match: {accountId: mongoose.Types.ObjectId(accountId)}},
+      {
+        $lookup:
+          {
+            from: "moneyflows",
+            localField: "_id",
+            foreignField: "categoryId",
+            as: "moneyFlow"
+          }
+      },
+      {
+        $project: {
+          title: 1,
+          color: 1,
+          iconKey: 1,
+          moneyFlow: {
+            $cond: {if: {$gt: [{$size: "$moneyFlow"}, 0]}, then: "$moneyFlow", else: [{type: 'expense', amount: 0}]}
+          }
+        }
+      },
+      {$unwind: "$moneyFlow"},
+      {
+        $group: {
+          _id: {
+            categoryId: "$_id", color: "$color", iconKey: "$iconKey", title: "$title"
+          },
+          totalAmount: {$sum: '$moneyFlow.amount'}
+        }
+      }
+    ])
+      .then(groupedData => resolve(groupedData.map(data => ({
+          categoryId: data._id.categoryId,
+          totalAmount: data.totalAmount,
+          title: data._id.title,
+          color: data._id.color,
+          iconKey: data._id.iconKey
+        })
+      )))
+      .catch(err => reject(500));
   });
 };
