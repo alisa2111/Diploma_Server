@@ -59,7 +59,7 @@ export const getAll = ({params}, res) => {
  */
 export const filterMoneyFlows = ({body}, res) => {
   let createdAt = {};
-  let match = _.omitBy(body.filterableFields, value => value === "all");
+  let match = _.omitBy(body.filterableFields, value => value === "");
   match.accountId = mongoose.Types.ObjectId(body.accountId);
 
   if (match.categoryId) {
