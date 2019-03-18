@@ -1,7 +1,7 @@
 import {Router} from 'express'
 import {schema} from '../account/model'
 import {middleware as body} from 'bodymen'
-import {addExpense, getSummaryExpenses, addIncome, getAll} from './moneyFlowService'
+import {addExpense, getSummaryExpenses, addIncome, getAll, filterMoneyFlows} from './moneyFlowService'
 export MoneyFlow, { schema } from './model'
 
 const router = new Router();
@@ -13,6 +13,13 @@ const {key, value, comment} = schema.tree;
  * @return all account's money-flow
  */
 router.get('/:accountId', getAll);
+
+/**
+ * Filter money flows for history
+ * @api {get} money-flow/filter
+ * @return filtered money flows
+ */
+router.post('/filter', filterMoneyFlows);
 
 
 /**

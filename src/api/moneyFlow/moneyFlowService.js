@@ -4,6 +4,7 @@ import {Source} from '../source/sourceController' // TODO remove
 import {getSources, updateSource} from "../source/sourceService";
 import mongoose, { Schema } from 'mongoose'
 import {getCtgrSummaryExpenses} from "../category/categoryService";
+import _ from "lodash";
 
 /**
  * body: {expense: {accountId, amount, categoryId, comment, sourceId}}
@@ -77,3 +78,51 @@ export const getAll = ({params}, res, next) => {
     .catch(() => res.status(400).end())
 };
 
+/**
+ * body {
+ * filterableFields: {type, categoryId, sourceId, startDate, endDate},
+ * accountId
+ * }
+ */
+export const filterMoneyFlows = ({body}, res) => {
+  const match = _.omitBy(body.filterableFields, value => value === "all");
+  match.accountId = mongoose.Types.ObjectId(body.accountId);
+
+  if (match.categoryId) {
+    match.categoryId =  mongoose.Types.ObjectId(match.categoryId)
+  }
+
+  if (match.sourceId) {
+    match.sourceId =  mongoose.Types.ObjectId(match.sourceId)
+  }
+
+  MoneyFlow.aggregate(
+    [
+      {
+        $match: match
+      },
+      {
+        $lookup:
+          {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category"
+          }
+      },
+
+      {
+        $lookup:
+          {
+            from: "sources",
+            localField: "sourceId",
+            foreignField: "_id",
+            as: "source"
+          }
+      }
+    ]
+  )
+    .then(notFound(res))
+    .then(success(res))
+    .catch(() => res.status(400).end())
+};
