@@ -46,36 +46,9 @@ export const addIncome = ({body}, res, next) => {
  * params  {accountId: accountId}
  */
 
-export const getAll = ({params}, res, next) => {
-  MoneyFlow.aggregate(
-    [
-      {
-        $match: {accountId: mongoose.Types.ObjectId(params.accountId)}
-      },
-      {
-        $lookup:
-          {
-            from: "categories",
-            localField: "categoryId",
-            foreignField: "_id",
-            as: "category"
-          }
-      },
-
-      {
-        $lookup:
-          {
-            from: "sources",
-            localField: "sourceId",
-            foreignField: "_id",
-            as: "source"
-          }
-      }
-    ]
-  )
-    .then(notFound(res))
-    .then(success(res))
-    .catch(() => res.status(400).end())
+export const getAll = ({params}, res) => {
+  const match = {accountId: mongoose.Types.ObjectId(params.accountId)};
+  getMoneyFlows (match, res);
 };
 
 /**
@@ -85,7 +58,8 @@ export const getAll = ({params}, res, next) => {
  * }
  */
 export const filterMoneyFlows = ({body}, res) => {
-  const match = _.omitBy(body.filterableFields, value => value === "all");
+  let createdAt = {};
+  let match = _.omitBy(body.filterableFields, value => value === "all");
   match.accountId = mongoose.Types.ObjectId(body.accountId);
 
   if (match.categoryId) {
@@ -96,6 +70,23 @@ export const filterMoneyFlows = ({body}, res) => {
     match.sourceId =  mongoose.Types.ObjectId(match.sourceId)
   }
 
+  if (match.startDate) {
+    const start = new Date(match.startDate);
+    match = _.omit(match, "startDate");
+    match.createdAt = _.assign(createdAt, {"$gt": start})
+  }
+
+  if (match.endDate) {
+    let end = new Date (match.endDate);
+    end.setDate(end.getDate() + 1);
+    match = _.omit(match, "endDate");
+    match.createdAt = _.assign(createdAt, {"$lt": end});
+  }
+  getMoneyFlows (match, res);
+};
+
+
+const getMoneyFlows = (match, res) =>
   MoneyFlow.aggregate(
     [
       {
@@ -124,5 +115,4 @@ export const filterMoneyFlows = ({body}, res) => {
   )
     .then(notFound(res))
     .then(success(res))
-    .catch(() => res.status(400).end())
-};
+    .catch(() => res.status(400).end());
