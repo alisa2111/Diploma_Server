@@ -3,7 +3,7 @@ import {
   updateSource,
   createSource,
   getSources,
-  isSourceConnectedToMoneyFlows
+  isSourceConnectedToMoneyFlows, replaceSource, deleteSource
 } from "./sourceService";
 import {schema} from './model';
 import {failRequest, success} from "../../services/response";
@@ -17,7 +17,7 @@ const router = new Router();
  * @api {get} /sources/accountId
  * @params: {accountId}
  */
-router.get('/:accountId', ({params}, res) => returnAllSources(params.accountId, res));
+router.get('/all/:accountId', ({params}, res) => returnAllSources(params.accountId, res));
 
 /**
  * Create source
@@ -45,7 +45,7 @@ router.put('/', ({body}, res) => {
     .catch(failRequest(res));
 });
 
-const returnAllSources = (accountId, res, successStatusCode) =>
+export const returnAllSources = (accountId, res, successStatusCode) =>
   getSources(accountId)
     .then(success(res, successStatusCode))
     .catch(failRequest(res));
@@ -61,5 +61,32 @@ router.get('/check/:sourceId', ({params}, res) => {
     .then(success(res))
     .catch(failRequest(res));
 });
+
+/**
+ * Delete source
+ *
+ * If replaceTo param exists, all moneyFlows with :sourceId
+ * will be updated and get :replaceTo value for sourceId instead
+ *
+ * @api {post} /sources/delete/:source
+ * @params: {sourceId: sourceID}
+ * @body: {replaceTo ?: replaceToId}
+ * @returns all source for deleted source's accountId
+ */
+router.post('/delete/:sourceId', ({params, body}, res) => {
+  if (body.replaceTo) {
+    replaceSource(params.sourceId, body.replaceTo)
+      .then(() => processDeleteSource(params.sourceId, res, 202))
+      .catch(failRequest(res))
+  } else {
+    processDeleteSource(params.sourceId, res, 202)
+  }
+});
+
+const processDeleteSource = (sourceId, res, successStatus) =>
+  deleteSource(sourceId)
+    .then(source => returnAllSources(source.accountId, res, successStatus))
+    .catch(failRequest(res));
+
 
 export default router;

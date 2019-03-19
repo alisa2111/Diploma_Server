@@ -20,7 +20,7 @@ const router = new Router();
  * @params: {accountId: accountId}
  * @return account's categories
  */
-router.get('/:accountId', ({params}, res) => returnAllCategories(params.accountId, res));
+router.get('/all/:accountId', ({params}, res) => returnAllCategories(params.accountId, res));
 
 /**
  * Create category

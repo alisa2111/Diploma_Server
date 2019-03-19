@@ -50,3 +50,50 @@ export const isSourceConnectedToMoneyFlows = (sourceId) => {
       .catch(reject)
   });
 };
+
+export const replaceSource = (sourceId, replaceTo) => {
+  return new Promise((resolve, reject) => {
+    MoneyFlow.updateMany(
+      {sourceId: sourceId},
+      {$set: {sourceId: replaceTo}}
+    ).then(res => {
+      if (!res.ok) {
+        reject();
+      }
+      return res;
+    })
+      .then(() => {
+        Source.findById(sourceId)
+          .then(sourceToDelete => {
+            Source.findById(replaceTo)
+              .then(sourceReplaceTo => {
+                sourceReplaceTo.balance += sourceToDelete.balance;
+                sourceReplaceTo.save();
+                resolve();
+              })
+          })
+      })
+  });
+};
+
+export const deleteSource = (sourceId) => {
+  return new Promise((resolve, reject) => {
+    isSourceConnectedToMoneyFlows(sourceId)
+      .then(result => {
+        if (result.connected) {
+          reject(403);
+        } else {
+          Source.findOneAndRemove({_id: sourceId})
+            .then(res => {
+              if (res) {
+                resolve(res);
+              } else {
+                reject(404);
+              }
+            })
+            .catch(reject)
+        }
+      })
+      .catch(reject);
+  });
+};
