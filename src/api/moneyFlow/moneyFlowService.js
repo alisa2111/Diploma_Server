@@ -1,7 +1,7 @@
 import {MoneyFlow} from './moneyFlowController'
 import {success, notFound} from '../../services/response';
 import {Source} from '../source/sourceController' // TODO remove
-import {getSources, updateSource} from "../source/sourceService";
+import {getSources, updateSourceBalance} from "../source/sourceService";
 import mongoose, { Schema } from 'mongoose'
 import {getCtgrSummaryExpenses} from "../category/categoryService";
 import _ from "lodash";
@@ -14,7 +14,7 @@ export const addExpense = ({body}, res, next) => {
   MoneyFlow.create(newExpense)
     .then(expense => expense.view(true))
     .then(expense => {
-      updateSource(expense);
+      updateSourceBalance(expense);
       return expense;
     })
     .then(expense => getSummaryExpenses({params: {accountId: expense.accountId}}, res, next))
@@ -37,7 +37,7 @@ export const addIncome = ({body}, res, next) => {
   const newIncome = {...body.income, type: 'income'};
   MoneyFlow.create(newIncome)
     .then(income => income.view(true))
-    .then(income => updateSource(income))
+    .then(income => updateSourceBalance(income))
     .then(() => getSources({params: {accountId: newIncome.accountId}}, res, next))
     .catch(() => res.status(400).end())
 };

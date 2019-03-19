@@ -1,36 +1,39 @@
 import {Source} from "./sourceController";
-import { success, notFound } from '../../services/response';
+import {MoneyFlow} from "../moneyFlow/moneyFlowController";
 
-export const createSource = ({body}, res, next) => {
-  return Source.create(body.source)
-    .then(source => source.view(true))
-    .then(success(res, 201))
-    .catch(next);
+export const createSource = source => {
+  return new Promise((resolve, reject) => {
+    Source.create(source)
+      .then(source => resolve(source.view()))
+      .catch(reject);
+  });
 };
 
 /**
  * params: {accountId: accountId}
  */
-export const getSources = ({params}, res, next) => {
-  Source.find({accountId: params.accountId})
-    .then(notFound(res))
-    .then(res => res.map(r => r.view()))
-    .then(success(res))
-    .catch(next);
-};
+export const getSources = accountId =>
+  new Promise((resolve, reject) => {
+    Source.find({accountId: accountId})
+      .then(res => resolve(res.map(r => r.view())))
+      .catch(reject);
+  });
 
-export const updateSourceAmount = ({params}, res, next) => {
-  Source.findById(params.sourceId)
-    .then(source => {
-      source.balance = params.balance;
-      return source;
-    })
-    .then(updatedSource => updatedSource.save())
-    .then(() => getSources({params}, res, next))
-    .catch(() => res.status(409).end())
-};
+export const updateSource = source =>
+  new Promise((resolve, reject) => {
+    Source.findById(source.id)
+      .then(s => {
+        console.log(s);
+        if (!s) {
+          reject(404);
+        }
+        Object.assign(s, source);
+        resolve(s.save());
+      })
+      .catch(reject);
+  });
 
-export const updateSource = moneyFlow => {
+export const updateSourceBalance = moneyFlow => {
   const {amount} = moneyFlow;
   return Source.findById(moneyFlow.sourceId)
     .then(source => {
@@ -38,4 +41,12 @@ export const updateSource = moneyFlow => {
       return source;
     })
     .then(updatedSource => updatedSource.save())
+};
+
+export const isSourceConnectedToMoneyFlows = (sourceId) => {
+  return new Promise((resolve, reject) => {
+    MoneyFlow.findOne({sourceId: sourceId})
+      .then(mf => resolve({connected: !!mf}))
+      .catch(reject)
+  });
 };
