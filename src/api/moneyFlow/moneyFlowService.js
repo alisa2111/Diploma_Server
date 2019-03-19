@@ -33,12 +33,12 @@ export const getSummaryExpenses = ({params}, res, next) => {
 /**
  * body {income: accountId, amount, categoryId, comment, sourceId}
  */
-export const addIncome = ({body}, res, next) => {
+export const addIncome = ({body}, res) => {
   const newIncome = {...body.income, type: 'income'};
   MoneyFlow.create(newIncome)
     .then(income => income.view(true))
     .then(income => updateSourceBalance(income))
-    .then(() => returnAllSources(newIncome.accountId, res, next))
+    .then(() => returnAllSources(newIncome.accountId, res, 201))
     .catch(failRequest(res));
 };
 

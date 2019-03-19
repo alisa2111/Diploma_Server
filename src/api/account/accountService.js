@@ -2,6 +2,7 @@ import {Account} from './accountController'
 import {User} from '../user/userController'
 import { success, notFound } from '../../services/response/'
 import {createCategory} from "../category/categoryService"
+import {createSource} from "../source/sourceService";
 
 /**
  * body {owner: "userId"}
@@ -12,6 +13,7 @@ export const createAccount = ({ body }, res) => {
     .then(account => account.view(true))
     .then(account => {
       createDefaultCategories(account.id);
+      createDefaultSources(account.id);
       attachAccountToUser(account.id, body.owner);
       return account;
     })
@@ -38,6 +40,12 @@ const createDefaultCategories = accountId =>
     {accountId, title: "Одежда", color: "#ffc34d", iconKey: "offer"},
     {accountId, title: "Спорт", color: "#29a329", iconKey: "sport"}
   ].forEach(category => createCategory(category));
+
+const createDefaultSources = accountId =>
+  [
+    {accountId, title: "Наличные", type: "cash"},
+    {accountId, title: "Карточка", type: "card"},
+  ].forEach(source => createSource(source));
 
 /**
  * params {accountId: "accountId"}
