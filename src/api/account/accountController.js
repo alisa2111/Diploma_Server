@@ -1,4 +1,3 @@
-import {middleware as body} from "bodymen";
 import { schema } from './model'
 import { Router } from 'express'
 import {createAccount, getAccount} from "./accountService";
@@ -13,7 +12,6 @@ const { balance, owner } = schema.tree;
  * @api {post} /accounts
  */
 router.post('/',
-  body({ balance, owner }),
   createAccount);
 
 /**
