@@ -1,8 +1,9 @@
-import {Account} from './accountController'
+import {Account, Invite} from './accountController'
 import {User} from '../user/userController'
 import { success, notFound } from '../../services/response/'
 import {createCategory} from "../category/categoryService"
 import {createSource} from "../source/sourceService";
+import {sendInviteEmail} from "../../services/mailer/mailer";
 
 /**
  * body {owner: "userId", name: string}
@@ -63,4 +64,15 @@ export const getAccount = ({params}, res, next) => {
     .then(account => account ? account.view() : null)
     .then(success(res))
     .catch(next)
+};
+
+/**
+ * body {email: string, accountId: string}
+ */
+export const sendInvite = ({body}, res) => {
+  Invite.create(body)
+    .then(invite => invite.view())
+    .then(sendInviteEmail)
+    .then(() => res.status(200).json({result: 'ok'}))
+    .catch(() => res.status(400).end())
 };

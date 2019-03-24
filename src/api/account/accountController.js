@@ -1,11 +1,12 @@
 import { schema } from './model'
+import { invSchema } from '../../services/mailer/model'
 import { Router } from 'express'
-import {createAccount, getAccount} from "./accountService";
+import {createAccount, getAccount, sendInvite} from "./accountService";
 export Account, { schema } from './model'
+export Invite, { invSchema } from '../../services/mailer/model'
 
 
 const router = new Router();
-const { balance, owner } = schema.tree;
 
 /**
  * Create account
@@ -20,5 +21,13 @@ router.post('/',
  */
 router.get('/:accountId',
   getAccount);
+
+/**
+ * Invite user to account
+ * @api {post} /accounts/invite
+ */
+router.post('/invite',
+  sendInvite);
+
 
 export default router;
