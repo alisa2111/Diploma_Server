@@ -5,25 +5,32 @@ import {createCategory} from "../category/categoryService"
 import {createSource} from "../source/sourceService";
 
 /**
- * body {owner: "userId"}
+ * body {owner: "userId", name: string}
  * return res = user with account
  */
 export const createAccount = ({ body }, res) => {
   Account.create(body)
-    .then(account => account.view(true))
+    .then(account => account.view())
     .then(account => {
+      // TODO chain
       createDefaultCategories(account.id);
       createDefaultSources(account.id);
-      attachAccountToUser(account.id, body.owner);
+      attachAccountToUser(account, body.owner);
       return account;
     })
     .then(success(res, 201))
     .catch(() => res.status(400).end())
 };
 
-const attachAccountToUser = (accountId, userId) =>
-  User.findById(userId)
-    .then(user => user ? Object.assign(user, user.accounts.push(accountId)).save() : null);
+const attachAccountToUser = (account, userId) => {
+  const attachedAccount = {
+    id: account.id,
+    name: account.name,
+  };
+
+  return User.findById(userId)
+    .then(user => user ? Object.assign(user, user.accounts.push(attachedAccount)).save() : null);
+};
 
 const createDefaultCategories = accountId =>
   [

@@ -25,11 +25,11 @@ const userSchema = new Schema({
     index: true,
     trim: true
   },
-  accounts: [{
-    type: mongoose.Schema.Types.ObjectId,
+  accounts: {
+    type: mongoose.Schema.Types.Array,
     required: true,
-    ref: 'Account',
-  }],
+    default: []
+  },
   role: {
     type: String,
     enum: roles,

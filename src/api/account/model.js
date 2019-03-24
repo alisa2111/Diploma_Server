@@ -1,14 +1,13 @@
 import mongoose, { Schema } from 'mongoose'
 
 const accountSchema = new Schema({
-  balance: {
-    type: Number,
+  name: {
+    type: String,
     required: true,
-    default: 0,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    // required: true,
+    required: true,
     ref: 'User',
   }
 }, {
@@ -18,7 +17,7 @@ const accountSchema = new Schema({
 accountSchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['id', 'balance', 'owner'];
+    let fields = ['id', 'name', 'owner'];
 
     if (full) {
       fields = [...fields, 'createdAt']
