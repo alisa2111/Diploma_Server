@@ -23,7 +23,7 @@ export const createAccount = ({ body }, res) => {
     .catch(() => res.status(400).end())
 };
 
-const attachAccountToUser = (account, userId) => {
+export const attachAccountToUser = (account, userId) => {
   const attachedAccount = {
     id: account.id,
     name: account.name,

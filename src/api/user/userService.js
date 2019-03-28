@@ -1,5 +1,6 @@
 import { success, notFound } from '../../services/response/'
 import { User } from '../user/userController'
+import {acceptInvite} from "../auth/authService";
 
 export const index = ({ querymen: { query, select, cursor } }, res, next) =>
   User.find(query, select, cursor)
@@ -21,7 +22,7 @@ export const create = ({body}, res, next) => {
   const {user} = body;
   return User.create(user)
     .then((user) => user.view(true))
-    .then(success(res, 201))
+    .then(user => body.inviteId ? acceptInvite(user, body.inviteId).then(success(res, 201)) : success(res, 201)(user))
     .catch((err) => {
       /* istanbul ignore else */
       if (err.name === 'MongoError' && err.code === 11000) {

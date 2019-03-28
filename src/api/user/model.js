@@ -25,11 +25,9 @@ const userSchema = new Schema({
     index: true,
     trim: true
   },
-  accounts: {
-    type: mongoose.Schema.Types.Array,
-    required: true,
-    default: []
-  },
+  accounts: [{
+    type: Object,
+  }],
   role: {
     type: String,
     enum: roles,
