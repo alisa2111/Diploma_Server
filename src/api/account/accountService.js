@@ -67,6 +67,16 @@ export const getAccount = ({params}, res, next) => {
 };
 
 /**
+ * params {accountId: "accountId"}
+ */
+export const getUsers = ({params}, res, next) => {
+  User.find({accounts :  {$elemMatch: {id: params.accountId}} })
+    .then(notFound(res))
+    .then(success(res))
+    .catch(next)
+};
+
+/**
  * body {email: string, accountId: string}
  */
 export const sendInvite = ({body}, res) => {

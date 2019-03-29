@@ -1,7 +1,7 @@
 import { schema } from './model'
 import { invSchema } from '../../services/mailer/model'
 import { Router } from 'express'
-import {createAccount, getAccount, sendInvite} from "./accountService";
+import {createAccount, getAccount, getUsers, sendInvite} from "./accountService";
 export Account, { schema } from './model'
 export Invite, { invSchema } from '../../services/mailer/model'
 
@@ -21,6 +21,13 @@ router.post('/',
  */
 router.get('/:accountId',
   getAccount);
+
+/**
+ * Get Account users
+ * @api {get} /accounts/get-users/:accountId
+ */
+router.get('/get-users/:accountId',
+  getUsers);
 
 /**
  * Invite user to account
