@@ -30,7 +30,17 @@ export const attachAccountToUser = (account, userId) => {
   };
 
   return User.findById(userId)
-    .then(user => user ? Object.assign(user, user.accounts.push(attachedAccount)).save() : null);
+    .then(user => {
+      if (user) {
+        if (user.accounts.find(account => account.id === attachedAccount.id)) {
+          return user;
+        } else {
+          return Object.assign(user, user.accounts.push(attachedAccount)).save();
+        }
+      } else {
+        return null;
+      }
+    });
 };
 
 const createDefaultCategories = accountId =>
