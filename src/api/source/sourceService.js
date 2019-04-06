@@ -23,10 +23,10 @@ export const updateSource = source =>
   new Promise((resolve, reject) => {
     Source.findById(source.id)
       .then(s => {
-        console.log(s);
         if (!s) {
           reject(404);
         }
+        source.balance = Math.round(source.balance * 100) / 100;
         Object.assign(s, source);
         resolve(s.save());
       })
@@ -37,7 +37,8 @@ export const updateSourceBalance = moneyFlow => {
   const {amount} = moneyFlow;
   return Source.findById(moneyFlow.sourceId)
     .then(source => {
-      moneyFlow.type === "expense" ? source.balance -= amount : source.balance += amount;
+      const newAmount = moneyFlow.type === "expense" ? source.balance - amount : source.balance + amount;
+      source.balance = Math.round(newAmount * 100) / 100;
       return source;
     })
     .then(updatedSource => updatedSource.save())

@@ -11,6 +11,7 @@ import _ from "lodash";
  */
 export const addExpense = ({body}, res, next) => {
   const newExpense = {...body.expense, type: 'expense'};
+  newExpense.amount = Math.round(newExpense.amount * 100) / 100;
   MoneyFlow.create(newExpense)
     .then(expense => expense.view(true))
     .then(expense => {
@@ -35,6 +36,7 @@ export const getSummaryExpenses = ({params}, res, next) => {
  */
 export const addIncome = ({body}, res) => {
   const newIncome = {...body.income, type: 'income'};
+  newIncome.amount = Math.round(newIncome.amount * 100) / 100;
   MoneyFlow.create(newIncome)
     .then(income => income.view(true))
     .then(income => updateSourceBalance(income))
