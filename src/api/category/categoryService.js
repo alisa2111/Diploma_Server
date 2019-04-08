@@ -10,6 +10,8 @@ export const createCategory = (category) => {
   });
 };
 
+export const createMultipleCategories = categories => Category.insertMany(categories);
+
 export const getAllCategories = (accountId) => {
   return new Promise((resolve, reject) => {
     Category.find({accountId: accountId})

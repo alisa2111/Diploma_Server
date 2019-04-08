@@ -9,6 +9,8 @@ export const createSource = source => {
   });
 };
 
+export const createMultipleSources = sources => Source.insertMany(sources);
+
 /**
  * params: {accountId: accountId}
  */
