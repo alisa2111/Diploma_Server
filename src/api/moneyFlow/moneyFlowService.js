@@ -10,7 +10,7 @@ import _ from "lodash";
  * body: {expense: {accountId, amount, categoryId, comment, sourceId}}
  */
 export const addExpense = ({body}, res, next) => {
-  const newExpense = {...body.expense, type: 'expense'};
+  const newExpense = {...body.expense, type: 'expense', date: new Date(body.expense.date)};
   newExpense.amount = Math.round(newExpense.amount * 100) / 100;
   MoneyFlow.create(newExpense)
     .then(expense => expense.view(true))
@@ -35,7 +35,7 @@ export const getSummaryExpenses = ({params}, res, next) => {
  * body {income: accountId, amount, categoryId, comment, sourceId}
  */
 export const addIncome = ({body}, res) => {
-  const newIncome = {...body.income, type: 'income'};
+  const newIncome = {...body.income, type: 'income', date: new Date(body.income.date)};
   newIncome.amount = Math.round(newIncome.amount * 100) / 100;
   MoneyFlow.create(newIncome)
     .then(income => income.view(true))
@@ -50,7 +50,7 @@ export const addIncome = ({body}, res) => {
 
 export const getAll = ({params}, res) => {
   const match = {accountId: mongoose.Types.ObjectId(params.accountId)};
-  getMoneyFlows (match, res);
+  getMoneyFlows(match, res);
 };
 
 /**

@@ -26,6 +26,10 @@ const moneyFlowSchema = new Schema({
     required: true,
     ref: 'Source'
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
 }, {
   timestamps: true
 });
@@ -33,7 +37,7 @@ const moneyFlowSchema = new Schema({
 moneyFlowSchema.methods = {
   view (full) {
     let view = {};
-    let fields = ['accountId', 'type', 'amount', 'comment', 'categoryId', 'sourceId'];
+    let fields = ['accountId', 'type', 'amount', 'comment', 'categoryId', 'sourceId', 'date'];
 
     if (full) {
       fields = [...fields, 'createdAt']
@@ -41,7 +45,7 @@ moneyFlowSchema.methods = {
 
     fields.forEach((field) => { view[field] = this[field] });
 
-    return view
+    return view;
   }
 
 };
