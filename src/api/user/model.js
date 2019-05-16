@@ -36,6 +36,9 @@ const userSchema = new Schema({
   picture: {
     type: String,
     trim: true
+  },
+  lastAccount: {
+    type: String,
   }
 }, {
   timestamps: true
